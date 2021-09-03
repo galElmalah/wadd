@@ -9,6 +9,6 @@
     "lib": ["es6"],
     "skipLibCheck": true
   },
-  "include": ["src/**/*", "tests/index.spec.ts"],
+  "include": ["src/**/*", "tests/index.spec.ts", "src/questions.ts"],
   "exclude": ["node_modules", "**/*.spec.ts"]
 }

@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
+  "bin": "wadd",
   "scripts": {
     "test": "jest",
     "prepare": "tsc"
@@ -10,7 +11,11 @@
   "author": "Gal Elmalah",
   "license": "ISC",
   "dependencies": {
-    "globby": "^12.0.2"
+    "@types/inquirer": "^7.3.3",
+    "chalk": "^4.1.2",
+    "commander": "^8.1.0",
+    "fast-glob": "^3.2.7",
+    "inquirer": "^8.1.2"
   },
   "devDependencies": {
     "@types/jest": "^27.0.1",
