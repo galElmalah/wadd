@@ -1,3 +1,3 @@
-import {join} from 'path'
+import { join } from 'path'
 
-export const aFixturePathGetter = (functionality:string) => (name:string) => join(__dirname, functionality, name)
+export const aFixturePathGetter = (functionality: string) => (name: string) => join(__dirname, functionality, name)

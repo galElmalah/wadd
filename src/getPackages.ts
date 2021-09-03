@@ -33,15 +33,18 @@ export const getPathsToPackages = async (basePath: string) => {
       cwd: basePath,
     });
   }
-  
-  return []
+
+  return [];
 };
 
 export const getPackages = async (basePath: string) => {
   const packageJsonPaths = await getPathsToPackages(basePath);
 
-  return packageJsonPaths.map((aPath) => ({
-    name: JSON.parse(readFileSync(join(basePath, aPath), 'utf-8')).name as string,
-    path: join(basePath, aPath),
-  })) || [];
+  return (
+    packageJsonPaths.map((aPath) => ({
+      name: JSON.parse(readFileSync(join(basePath, aPath), 'utf-8'))
+        .name as string,
+      path: join(basePath, aPath),
+    })) || []
+  );
 };
