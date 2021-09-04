@@ -1,6 +1,5 @@
 import { Command } from 'commander';
-import { join } from 'path';
-import { executer } from './executer';
+import { installer } from './installer';
 import { findPathToTheNearestMonorepo } from './findPathToTheNearestMonorepo';
 import { getPackages } from './getPackages';
 import { identifyClient } from './identifyClient';
@@ -34,7 +33,6 @@ program
       packagesToInstall: string,
       options: { isDev: boolean }
     ) => {
-
       const basePath = findPathToTheNearestMonorepo(process.cwd())
 
       const state: State = {
@@ -49,7 +47,7 @@ program
       }
 
       const client = identifyClient(basePath);
-      executer(basePath, client, state, options.isDev);
+      installer(basePath, client, state, options.isDev);
     }
   );
 
