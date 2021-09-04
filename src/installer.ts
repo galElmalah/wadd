@@ -1,6 +1,6 @@
 import { Clients } from '.';
 import { State } from './cli';
-import { exec, spawn } from 'child_process';
+import { spawn } from 'child_process';
 const commandsCreatorsMap = {
   [Clients.yarn]:
     (packages: string[], isDev: boolean) => (workspaceName: string) =>
