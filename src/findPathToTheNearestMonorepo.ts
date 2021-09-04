@@ -9,6 +9,7 @@ export const findPathToTheNearestMonorepo = (fromPath: string) => {
   }
 
   const lernaJson = getLernaJson(fromPath);
+  
   if (lernaJson?.packages) {
     return fromPath;
   }
