@@ -1,6 +1,7 @@
 import { Command } from 'commander';
 import { join } from 'path';
 import { executer } from './executer';
+import { findPathToTheNearestMonorepo } from './findPathToTheNearestMonorepo';
 import { getPackages } from './getPackages';
 import { identifyClient } from './identifyClient';
 import { askForPackagesToInstall, askForWorkspaces } from './questions';
@@ -33,12 +34,8 @@ program
       packagesToInstall: string,
       options: { isDev: boolean }
     ) => {
-      
-      const basePath =
-        join(
-          __dirname,
-          '../tests/fixtures/getPackages/workspacesInPackageJsonAsArray'
-        ) || process.cwd();
+
+      const basePath = findPathToTheNearestMonorepo(process.cwd())
 
       const state: State = {
         workspacesToInstallIn: workspacesToInstallIn.split(',').filter(Boolean),
