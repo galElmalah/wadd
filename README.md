@@ -1,7 +1,7 @@
 # wadd
 I don't know about you but there are three things that always annoys me when I'm adding a package to a monorepo
 1. I don't remember the specific command for either yarn or lerna.
-2. I'm not always whats the name of the workspace that I wish to add a new dependency to.
+2. I'm not always sure whats the name of the workspace that I wish to add a new dependency to.
 3. I want to be able to add multiple packages to multiple workspaces in a single command.
 
 ## Usage
