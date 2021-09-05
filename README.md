@@ -9,7 +9,7 @@ first off install `wadd`
 ```bash
 npm i -g wadd
 ```
-once that's done, you can go ahead and run `wadd` in your monorepo and it will ask you which workspace you would like to add the packages and which packages you would like to add.  
+once that's done, you can go ahead and run `wadd` in your monorepo and it will ask you which workspaces you would like to add the packages and which packages you would like to add.  
 Currently, the only monorepo clients that `wadd` support are, `lerna` and `yarn`. 
 
 https://user-images.githubusercontent.com/40733145/132123405-aa2832e3-6d22-488c-8747-e2fbc2d91429.mp4
