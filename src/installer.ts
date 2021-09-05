@@ -1,17 +1,43 @@
 import { Clients } from '.';
 import { State } from './cli';
 import { spawn } from 'child_process';
+
+const yarnInstaller = (
+  workspaces: string[],
+  packagesToInstall: string[],
+  isDev: boolean
+): string[] =>
+  workspaces.reduce(
+    (acc, nextWorkspace) => [
+      ...acc,
+      `yarn workspaces ${nextWorkspace} add ${packagesToInstall.join(' ')}${
+        isDev ? ' --dev' : ''
+      }`,
+    ],
+    []
+  );
+
+const lernaInstaller = (
+  workspaces: string[],
+  packagesToInstall: string[],
+  isDev: boolean
+): string[] => {
+  const commands = [];
+  packagesToInstall.forEach((packageToInstall) => {
+    workspaces.forEach((workspace) => {
+      commands.push(
+        `lerna add ${packageToInstall} --scope=${workspace}${
+          isDev ? ' --dev' : ''
+        }`
+      );
+    });
+  });
+  return commands;
+};
+
 const commandsCreatorsMap = {
-  [Clients.yarn]:
-    (packages: string[], isDev: boolean) => (workspaceName: string) =>
-      `yarn workspaces ${workspaceName} add ${packages.join(' ')}${
-        isDev ? ' --dev' : ''
-      }`,
-  [Clients.lerna]:
-    (isDev: boolean) => (packageToInstall: string, workspaceName: string) =>
-      `lerna add ${packageToInstall} --scope=${workspaceName}${
-        isDev ? ' --dev' : ''
-      }`,
+  [Clients.yarn]: yarnInstaller,
+  [Clients.lerna]: lernaInstaller,
 };
 
 const execute = (at: string) => (command: string) =>
@@ -28,26 +54,11 @@ export const installer = async (
   { workspacesToInstallIn, packagesToInstall }: State,
   isDev: boolean
 ) => {
-  if (client === Clients.yarn) {
-    const commandCreator = commandsCreatorsMap[client](
-      packagesToInstall,
-      isDev
-    );
+  const commands = commandsCreatorsMap[client](
+    workspacesToInstallIn,
+    packagesToInstall,
+    isDev
+  );
 
-    await Promise.all(
-      workspacesToInstallIn.map(commandCreator).map(execute(basePath))
-    );
-  }
-
-  if (client === Clients.lerna) {
-    const commands = [];
-    const commandCreator = commandsCreatorsMap[client](isDev);
-    packagesToInstall.forEach((packageToInstall) => {
-      workspacesToInstallIn.forEach((workspace) => {
-        commands.push(commandCreator(packageToInstall, workspace));
-      });
-    });
-
-    await Promise.all(commands.map(execute(basePath)));
-  }
+  await Promise.all(commands.map(execute(basePath)));
 };
