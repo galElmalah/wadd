@@ -54,10 +54,10 @@ const commandsCreatorsMap = {
 const execute = (at: string) => ({command, workspace}: InstallerArgs) =>
   new Promise((resolve, reject) => {
     const cp =  exec(command, { cwd: at, env:process.env });
-    const transformer = workspacePrefixTransformer(workspace)
-    cp.stdout.pipe(transformer).pipe(process.stdout);
-    cp.stdin.pipe(transformer).pipe(process.stdin);
-    cp.stderr.pipe(transformer).pipe(process.stderr);
+
+    cp.stdout.pipe(workspacePrefixTransformer(workspace)).pipe(process.stdout);
+    cp.stdin.pipe(workspacePrefixTransformer(workspace)).pipe(process.stdin);
+    cp.stderr.pipe(workspacePrefixTransformer(workspace)).pipe(process.stderr);
     cp.on('close', resolve);
     cp.on('exit', resolve);
     cp.on('error', reject);
@@ -75,5 +75,7 @@ export const installer = async (
     isDev
   );
 
-  await Promise.all(commands.map(execute(basePath)));
+  for(const command of commands) {
+    await execute(basePath)(command)
+  }
 };
