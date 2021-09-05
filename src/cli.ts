@@ -35,21 +35,27 @@ program
       packagesToInstall: string,
       options: { isDev: boolean }
     ) => {
-      const basePath = findPathToTheNearestMonorepo(process.cwd())
+      try {
+        const basePath = findPathToTheNearestMonorepo(process.cwd());
 
-      const state: State = {
-        workspacesToInstallIn: workspacesToInstallIn.split(',').filter(Boolean),
-        packagesToInstall: packagesToInstall.split(' ').filter(Boolean),
-      };
+        const state: State = {
+          workspacesToInstallIn: workspacesToInstallIn
+            .split(',')
+            .filter(Boolean),
+          packagesToInstall: packagesToInstall.split(' ').filter(Boolean),
+        };
 
-      if (!state.workspacesToInstallIn.length) {
-        const choices = (await getPackages(basePath)).map((p) => p.name);
-        state.workspacesToInstallIn = await askForWorkspaces(choices);
-        state.packagesToInstall = await askForPackagesToInstall();
+        if (!state.workspacesToInstallIn.length) {
+          const choices = (await getPackages(basePath)).map((p) => p.name);
+          state.workspacesToInstallIn = await askForWorkspaces(choices);
+          state.packagesToInstall = await askForPackagesToInstall();
+        }
+
+        const client = identifyClient(basePath);
+        installer(basePath, client, state, options.isDev);
+      } catch (e) {
+        console;
       }
-
-      const client = identifyClient(basePath);
-      installer(basePath, client, state, options.isDev);
     }
   );
 

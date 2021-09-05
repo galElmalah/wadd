@@ -1,18 +1,29 @@
 import { Clients } from '.';
 import { State } from './cli';
-import { spawn } from 'child_process';
+import { exec } from 'child_process';
+import { Transform } from 'stream';
 
+interface InstallerArgs {
+  workspace: string;
+  command: string;
+}
+const workspacePrefixTransformer = (workspace:string) => new Transform({
+  transform(chunk, encoding, callback) {
+    this.push(`[${workspace}]:: ${chunk.toString()}`);
+    callback();
+  }
+});
 const yarnInstaller = (
   workspaces: string[],
   packagesToInstall: string[],
   isDev: boolean
-): string[] =>
+): InstallerArgs[] =>
   workspaces.reduce(
-    (acc, nextWorkspace) => [
+    (acc, workspace) => [
       ...acc,
-      `yarn workspaces ${nextWorkspace} add ${packagesToInstall.join(' ')}${
+      {command:`yarn workspace ${workspace} add ${packagesToInstall.join(' ')}${
         isDev ? ' --dev' : ''
-      }`,
+      }`, workspace},
     ],
     []
   );
@@ -21,14 +32,14 @@ const lernaInstaller = (
   workspaces: string[],
   packagesToInstall: string[],
   isDev: boolean
-): string[] => {
+): InstallerArgs[] => {
   const commands = [];
   packagesToInstall.forEach((packageToInstall) => {
     workspaces.forEach((workspace) => {
       commands.push(
-        `lerna add ${packageToInstall} --scope=${workspace}${
+        {command: `lerna add ${packageToInstall} --scope=${workspace}${
           isDev ? ' --dev' : ''
-        }`
+        }`, workspace}
       );
     });
   });
@@ -40,13 +51,17 @@ const commandsCreatorsMap = {
   [Clients.lerna]: lernaInstaller,
 };
 
-const execute = (at: string) => (command: string) =>
+const execute = (at: string) => ({command, workspace}: InstallerArgs) =>
   new Promise((resolve, reject) => {
-    const cp = spawn(command, [], { cwd: at, stdio: 'inherit' });
+    const cp =  exec(command, { cwd: at, env:process.env });
+    const transformer = workspacePrefixTransformer(workspace)
+    cp.stdout.pipe(transformer).pipe(process.stdout);
+    cp.stdin.pipe(transformer).pipe(process.stdin);
+    cp.stderr.pipe(transformer).pipe(process.stderr);
     cp.on('close', resolve);
     cp.on('exit', resolve);
     cp.on('error', reject);
-  });
+  })
 
 export const installer = async (
   basePath: string,

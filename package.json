@@ -8,7 +8,8 @@
   },
   "scripts": {
     "test": "jest",
-    "prepare": "tsc"
+    "prepare": "tsc",
+    "build": "tsc"
   },
   "author": "Gal Elmalah",
   "license": "ISC",
