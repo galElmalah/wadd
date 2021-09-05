@@ -53,8 +53,7 @@ const commandsCreatorsMap = {
 
 const execute = (at: string) => ({command, workspace}: InstallerArgs) =>
   new Promise((resolve, reject) => {
-    const cp =  exec(command, { cwd: at, env:process.env });
-
+    const cp = exec(command, { cwd: at, env:process.env });
     cp.stdout.pipe(workspacePrefixTransformer(workspace)).pipe(process.stdout);
     cp.stdin.pipe(workspacePrefixTransformer(workspace)).pipe(process.stdin);
     cp.stderr.pipe(workspacePrefixTransformer(workspace)).pipe(process.stderr);
