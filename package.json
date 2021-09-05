@@ -2,7 +2,7 @@
   "name": "wadd",
   "version": "1.1.1",
   "description": "",
-  "main": "dist/index.js",
+  "main": "dist/cli.js",
   "bin": "wadd",
   "scripts": {
     "test": "jest",
